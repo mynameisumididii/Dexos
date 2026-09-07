@@ -126,7 +126,7 @@ local function CreateButton(text, callback)
     Btn.Text = text
     Btn.TextColor3 = Color3.fromRGB(200, 200, 205) -- Non-bright Soft White
     Btn.TextSize = 12
-    Btn.Font = Enum.Font.GothamBg or Enum.Font.GothamSemibold
+    Btn.Font = Enum.Font.GothamSemibold
     Btn.ZIndex = 3
     Btn.Parent = Content
 
@@ -236,6 +236,7 @@ CreateButton("Fly Mode: Toggle", function(btn)
         flying = not flying
         if flying then
             btn.Text = "Fly Mode: ON"
+            btn.BackgroundColor3 = Color3.fromRGB(48, 48, 52)
             f_bg = Instance.new("BodyGyro") f_bg.P = 9e4 f_bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
             f_bg.cframe = root.CFrame f_bg.Parent = root
             f_bv = Instance.new("BodyVelocity") f_bv.velocity = Vector3.new(0, 0.1, 0) f_bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
@@ -257,6 +258,7 @@ CreateButton("Fly Mode: Toggle", function(btn)
                 if f_bv then f_bv:Destroy() end
                 if char:FindFirstChild("Humanoid") then char.Humanoid.PlatformStand = false end
                 btn.Text = "Fly Mode: Toggle"
+                btn.BackgroundColor3 = Color3.fromRGB(38, 38, 42)
             end)
         else flying = false end
     end)
@@ -283,5 +285,3 @@ CreateButton("Player ESP: Toggle", function(btn)
     if espActive then btn.Text = "ESP: ON" else btn.Text = "Player ESP: Toggle" end
     local function ApplyESP(player)
         if player ~= LP and player.Character then
-            if espActive then
-                if not player.Character:FindFirstChild("DexosESP") then
