@@ -33,7 +33,7 @@ PanelStroke.Color = Color3.fromRGB(180, 0, 255)
 PanelStroke.Thickness = 1.5
 PanelStroke.Parent = Panel
 
--- 🌌 ANIME BG IMAGE
+-- Anime Background
 local AnimeBG = Instance.new("ImageLabel")
 AnimeBG.Size = UDim2.new(1, 0, 1, 0)
 AnimeBG.BackgroundTransparency = 1
@@ -57,10 +57,10 @@ TitleCorner.CornerRadius = UDim.new(0, 10)
 TitleCorner.Parent = TitleBar
 
 local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, -20, 1, 0)
+Title.Size = UDim2.new(1, -50, 1, 0)
 Title.Position = UDim2.new(0, 15, 0, 0)
 Title.BackgroundTransparency = 1
-Title.Text = "DEXOS HUB  //  UNIVERSAL v2"
+Title.Text = "DEXOS HUB  //  UNIVERSAL v3"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 14
 Title.Font = Enum.Font.GothamBold
@@ -68,13 +68,58 @@ Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.ZIndex = 3
 Title.Parent = TitleBar
 
+-- --- OPEN EYE ICON (Sadece menü kapalıyken sol ortada görünecek)
+local OpenBtn = Instance.new("TextButton")
+OpenBtn.Size = UDim2.new(0, 60, 0, 35)
+OpenBtn.Position = UDim2.new(0, 10, 0.5, -17)
+OpenBtn.BackgroundColor3 = Color3.fromRGB(20, 15, 25)
+OpenBtn.BackgroundTransparency = 0.3
+OpenBtn.Text = "Dexos"
+OpenBtn.TextColor3 = Color3.fromRGB(180, 0, 255)
+OpenBtn.TextSize = 12
+OpenBtn.Font = Enum.Font.GothamBold
+OpenBtn.Visible = false
+OpenBtn.ZIndex = 5
+OpenBtn.Parent = SGui
+
+local OpenCorner = Instance.new("UICorner")
+OpenCorner.CornerRadius = UDim.new(0, 6)
+OpenCorner.Parent = OpenBtn
+
+local OpenStroke = Instance.new("UIStroke")
+OpenStroke.Color = Color3.fromRGB(180, 0, 255)
+OpenStroke.Thickness = 1
+OpenStroke.Parent = OpenBtn
+
+-- --- CLOSE BUTTON (Title Bar'ın sağ köşesindeki X)
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Size = UDim2.new(0, 30, 0, 30)
+CloseBtn.Position = UDim2.new(1, -35, 0, 5)
+CloseBtn.BackgroundTransparency = 1
+CloseBtn.Text = "X"
+CloseBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
+CloseBtn.TextSize = 16
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.ZIndex = 4
+CloseBtn.Parent = TitleBar
+
+CloseBtn.Activated:Connect(function()
+    Panel.Visible = false
+    OpenBtn.Visible = true
+end)
+
+OpenBtn.Activated:Connect(function()
+    Panel.Visible = true
+    OpenBtn.Visible = false
+end)
+
 -- Scrolling Content Frame
 local Content = Instance.new("ScrollingFrame")
 Content.Size = UDim2.new(1, -20, 1, -55)
 Content.Position = UDim2.new(0, 10, 0, 45)
 Content.BackgroundTransparency = 1
 Content.BorderSizePixel = 0
-Content.CanvasSize = UDim2.new(0, 0, 0, 450)
+Content.CanvasSize = UDim2.new(0, 0, 0, 480)
 Content.ScrollBarThickness = 3
 Content.ScrollBarImageColor3 = Color3.fromRGB(180, 0, 255)
 Content.ZIndex = 2
@@ -115,16 +160,28 @@ local function CreateButton(text, callback)
     return Btn
 end
 
+-- ==========================================
+--         ⚙️ ENGINE CORE UTILITIES
+-- ==========================================
 _G.StepSpeed = 0
+_G.CustomJumpBoost = 0
 _G.InfJump = false
 
+-- Physical Core Loop
 RunService.RenderStepped:Connect(function()
     pcall(function()
         local char = LP.Character
         local root = char and char:FindFirstChild("HumanoidRootPart")
         local hum = char and char:FindFirstChild("Humanoid")
+        
+        -- WalkSpeed Multiplier
         if root and hum and hum.MoveDirection.Magnitude > 0 and _G.StepSpeed > 0 then
-            root.CFrame = root.CFrame + (hum.MoveDirection * (_G.StepSpeed * 0.1))
+            root.CFrame = root.CFrame + (hum.MoveDirection * (_G.StepSpeed * 0.05))
+        end
+        
+        -- Custom Jump Power Multiplier
+        if _G.CustomJumpBoost > 0 and UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+            root.Velocity = Vector3.new(root.Velocity.X, 50 + _G.CustomJumpBoost, root.Velocity.Z)
         end
     end)
 end)
@@ -138,28 +195,57 @@ end)
 local Indicator = Instance.new("TextLabel")
 Indicator.Size = UDim2.new(1, -5, 0, 20)
 Indicator.BackgroundTransparency = 1
-Indicator.Text = "Custom Speed Level: 0"
+Indicator.Text = "Speed Level: 0  ||  Jump Level: 0"
 Indicator.TextColor3 = Color3.fromRGB(200, 180, 220)
 Indicator.TextSize = 11
 Indicator.Font = Enum.Font.Gotham
 Indicator.ZIndex = 3
 Indicator.Parent = Content
 
-CreateButton("🏃 WalkSpeed +10", function()
-    _G.StepSpeed = _G.StepSpeed + 2
-    Indicator.Text = "Custom Speed Level: " .. tostring(_G.StepSpeed)
+local function UpdateStats()
+    Indicator.Text = "Speed Level: " .. tostring(_G.StepSpeed) .. "  ||  Jump Level: " .. tostring(_G.CustomJumpBoost)
+end
+
+-- --- FEATURES CONFIG ---
+
+-- 1. SPEED UP (+5)
+CreateButton("🏃 WalkSpeed +5", function()
+    _G.StepSpeed = _G.StepSpeed + 1
+    UpdateStats()
 end)
 
-CreateButton("🚶 WalkSpeed -10", function()
-    if _G.StepSpeed > 0 then _G.StepSpeed = _G.StepSpeed - 2 else _G.StepSpeed = 0 end
-    Indicator.Text = "Custom Speed Level: " .. tostring(_G.StepSpeed)
+-- 2. SPEED DOWN (-5)
+CreateButton("🚶 WalkSpeed -5", function()
+    if _G.StepSpeed > 0 then _G.StepSpeed = _G.StepSpeed - 1 else _G.StepSpeed = 0 end
+    UpdateStats()
 end)
 
+-- 3. JUMP UP (+5)
+CreateButton("🚀 Jump Power +5", function()
+    _G.CustomJumpBoost = _G.CustomJumpBoost + 5
+    UpdateStats()
+end)
+
+-- 4. JUMP DOWN (-5)
+CreateButton("📉 Jump Power -5", function()
+    if _G.CustomJumpBoost > 0 then _G.CustomJumpBoost = _G.CustomJumpBoost - 5 else _G.CustomJumpBoost = 0 end
+    UpdateStats()
+end)
+
+-- 5. RESET ALL STATS
+CreateButton("↩️ Reset Stats to Normal", function()
+    _G.StepSpeed = 0
+    _G.CustomJumpBoost = 0
+    UpdateStats()
+end)
+
+-- 6. INFINITE JUMP
 CreateButton("♾️ Infinite Jump: Toggle", function(btn)
     _G.InfJump = not _G.InfJump
     if _G.InfJump then btn.Text = "♾️ Infinite Jump: ON" else btn.Text = "♾️ Infinite Jump: Toggle" end
 end)
 
+-- 7. SMOOTH FLY SYSTEM
 local flying = false
 local flySpeed = 60
 local f_bv, f_bg
@@ -197,6 +283,7 @@ CreateButton("🦅 Fly Mode: Toggle", function(btn)
     end)
 end)
 
+-- 8. NOCLIP
 local noclip = false
 CreateButton("🧱 Noclip: Toggle", function(btn)
     noclip = not noclip
@@ -205,41 +292,3 @@ CreateButton("🧱 Noclip: Toggle", function(btn)
     nc = RunService.Stepped:Connect(function()
         if not noclip then nc:Disconnect() return end
         if LP.Character then
-            for _, v in pairs(LP.Character:GetDescendants()) do
-                if v:IsA("BasePart") then v.CanCollide = false end
-            end
-        end
-    end)
-end)
-
-local espActive = false
-CreateButton("👁️ Player ESP: Toggle", function(btn)
-    espActive = not espActive
-    if espActive then btn.Text = "👁️ ESP: ON" else btn.Text = "👁️ Player ESP: Toggle" end
-    local function ApplyESP(player)
-        if player ~= LP and player.Character then
-            if espActive then
-                if not player.Character:FindFirstChild("DexosESP") then
-                    local highlight = Instance.new("Highlight")
-                    highlight.Name = "DexosESP"
-                    highlight.FillColor = Color3.fromRGB(180, 0, 255)
-                    highlight.FillTransparency = 0.5
-                    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-                    highlight.OutlineTransparency = 0.2
-                    highlight.Parent = player.Character
-                end
-            else
-                if player.Character:FindFirstChild("DexosESP") then player.Character.DexosESP:Destroy() end
-            end
-        end
-    end
-    for _, p in pairs(game.Players:GetPlayers()) do ApplyESP(p) end
-    game.Players.PlayerAdded:Connect(function(p) p.CharacterAdded:Connect(function() task.wait(1) if espActive then ApplyESP(p) end end) end)
-end)
-
--- Sol Ctrl ile Kapatma/Açma Bindi (Düzeltildi)
-UserInputService.InputBegan:Connect(function(input, processed)
-    if not processed and input.KeyCode == Enum.KeyCode.LeftControl then
-        Panel.Visible = not Panel.Visible
-    end
-end)
