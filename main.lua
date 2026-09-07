@@ -18,29 +18,27 @@ local Panel = Instance.new("Frame")
 Panel.Size = UDim2.new(0, 420, 0, 310)
 Panel.Position = UDim2.new(0.5, -210, 0.4, -155)
 Panel.BackgroundColor3 = Color3.fromRGB(15, 12, 18)
-Panel.BackgroundTransparency = 0.25 -- Sleek semi-transparent look
+Panel.BackgroundTransparency = 0.25
 Panel.BorderSizePixel = 0
 Panel.Active = true
 Panel.Draggable = true
 Panel.Parent = SGui
 
--- Premium Corner
 local PanelCorner = Instance.new("UICorner")
 PanelCorner.CornerRadius = UDim.new(0, 10)
 PanelCorner.Parent = Panel
 
--- Glowing Neon Purple Border Line
 local PanelStroke = Instance.new("UIStroke")
 PanelStroke.Color = Color3.fromRGB(180, 0, 255)
 PanelStroke.Thickness = 1.5
 PanelStroke.Parent = Panel
 
--- 🌌 ANIME BG IMAGE (High Quality Premium Anime Render Art Background)
+-- 🌌 ANIME BG IMAGE
 local AnimeBG = Instance.new("ImageLabel")
 AnimeBG.Size = UDim2.new(1, 0, 1, 0)
 AnimeBG.BackgroundTransparency = 1
-AnimeBG.Image = "rbxassetid://13962635905" -- Premium neon style aesthetic anime girl asset
-AnimeBG.ImageTransparency = 0.75 -- Blended softly into the background so you can read buttons easily
+AnimeBG.Image = "rbxassetid://13962635905"
+AnimeBG.ImageTransparency = 0.75
 AnimeBG.ScaleType = Enum.ScaleType.Crop
 AnimeBG.ZIndex = 0
 AnimeBG.Parent = Panel
@@ -58,7 +56,6 @@ local TitleCorner = Instance.new("UICorner")
 TitleCorner.CornerRadius = UDim.new(0, 10)
 TitleCorner.Parent = TitleBar
 
--- Title Text (DEXOS HUB)
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, -20, 1, 0)
 Title.Position = UDim2.new(0, 15, 0, 0)
@@ -71,7 +68,7 @@ Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.ZIndex = 3
 Title.Parent = TitleBar
 
--- Scrolling Content Frame for buttons
+-- Scrolling Content Frame
 local Content = Instance.new("ScrollingFrame")
 Content.Size = UDim2.new(1, -20, 1, -55)
 Content.Position = UDim2.new(0, 10, 0, 45)
@@ -87,7 +84,6 @@ local ListLayout = Instance.new("UIListLayout")
 ListLayout.Parent = Content
 ListLayout.Padding = UDim.new(0, 8)
 
--- MODERN BUTTON MAKER FUNCTION
 local function CreateButton(text, callback)
     local Btn = Instance.new("TextButton")
     Btn.Size = UDim2.new(1, -5, 0, 35)
@@ -119,31 +115,23 @@ local function CreateButton(text, callback)
     return Btn
 end
 
--- ==========================================
---         ⚙️ ENGINE CORE UTILITIES
--- ==========================================
 _G.StepSpeed = 0
 _G.InfJump = false
 
--- Physical Boost Core loop
 RunService.RenderStepped:Connect(function()
     pcall(function()
         local char = LP.Character
         local root = char and char:FindFirstChild("HumanoidRootPart")
         local hum = char and char:FindFirstChild("Humanoid")
-        
         if root and hum and hum.MoveDirection.Magnitude > 0 and _G.StepSpeed > 0 then
             root.CFrame = root.CFrame + (hum.MoveDirection * (_G.StepSpeed * 0.1))
         end
     end)
 end)
 
--- Infinite Jump connection
 UserInputService.JumpRequest:Connect(function()
     if _G.InfJump then
-        pcall(function()
-            LP.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
-        end)
+        pcall(function() LP.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping") end)
     end
 end)
 
@@ -157,59 +145,45 @@ Indicator.Font = Enum.Font.Gotham
 Indicator.ZIndex = 3
 Indicator.Parent = Content
 
--- --- FEATURES CONFIG ---
-
--- 1. SPEED UP
 CreateButton("🏃 WalkSpeed +10", function()
     _G.StepSpeed = _G.StepSpeed + 2
     Indicator.Text = "Custom Speed Level: " .. tostring(_G.StepSpeed)
 end)
 
--- 2. SPEED DOWN
 CreateButton("🚶 WalkSpeed -10", function()
     if _G.StepSpeed > 0 then _G.StepSpeed = _G.StepSpeed - 2 else _G.StepSpeed = 0 end
     Indicator.Text = "Custom Speed Level: " .. tostring(_G.StepSpeed)
 end)
 
--- 3. INFINITE JUMP
 CreateButton("♾️ Infinite Jump: Toggle", function(btn)
     _G.InfJump = not _G.InfJump
     if _G.InfJump then btn.Text = "♾️ Infinite Jump: ON" else btn.Text = "♾️ Infinite Jump: Toggle" end
 end)
 
--- 4. SMOOTH FLY SYSTEM
 local flying = false
 local flySpeed = 60
 local f_bv, f_bg
-
 CreateButton("🦅 Fly Mode: Toggle", function(btn)
     pcall(function()
         local char = LP.Character
         local root = char and char:FindFirstChild("HumanoidRootPart")
         if not root then return end
         flying = not flying
-        
         if flying then
             btn.Text = "🦅 Fly Mode: ON"
-            f_bg = Instance.new("BodyGyro")
-            f_bg.P = 9e4 f_bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+            f_bg = Instance.new("BodyGyro") f_bg.P = 9e4 f_bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
             f_bg.cframe = root.CFrame f_bg.Parent = root
-            
-            f_bv = Instance.new("BodyVelocity")
-            f_bv.velocity = Vector3.new(0, 0.1, 0) f_bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+            f_bv = Instance.new("BodyVelocity") f_bv.velocity = Vector3.new(0, 0.1, 0) f_bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
             f_bv.Parent = root
-            
             task.spawn(function()
                 while flying and char and root.Parent do
                     char.Humanoid.PlatformStand = true
                     local camera = workspace.CurrentCamera
                     local moveDir = Vector3.new(0, 0, 0)
-                    
                     if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + camera.CFrame.LookVector end
                     if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - camera.CFrame.LookVector end
                     if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - camera.CFrame.RightVector end
                     if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + camera.CFrame.RightVector end
-                    
                     f_bv.velocity = moveDir * flySpeed
                     f_bg.cframe = camera.CFrame
                     task.wait()
@@ -219,13 +193,10 @@ CreateButton("🦅 Fly Mode: Toggle", function(btn)
                 if char:FindFirstChild("Humanoid") then char.Humanoid.PlatformStand = false end
                 btn.Text = "🦅 Fly Mode: Toggle"
             end)
-        else
-            flying = false
-        end
+        else flying = false end
     end)
 end)
 
--- 5. NOCLIP
 local noclip = false
 CreateButton("🧱 Noclip: Toggle", function(btn)
     noclip = not noclip
@@ -241,12 +212,10 @@ CreateButton("🧱 Noclip: Toggle", function(btn)
     end)
 end)
 
--- 6. NON-LAG CHAMS ESP
 local espActive = false
 CreateButton("👁️ Player ESP: Toggle", function(btn)
     espActive = not espActive
     if espActive then btn.Text = "👁️ ESP: ON" else btn.Text = "👁️ Player ESP: Toggle" end
-    
     local function ApplyESP(player)
         if player ~= LP and player.Character then
             if espActive then
@@ -264,19 +233,13 @@ CreateButton("👁️ Player ESP: Toggle", function(btn)
             end
         end
     end
-
     for _, p in pairs(game.Players:GetPlayers()) do ApplyESP(p) end
-    game.Players.PlayerAdded:Connect(function(p)
-        p.CharacterAdded:Connect(function()
-            task.wait(1)
-            if espActive then ApplyESP(p) end
-        end)
-    end)
+    game.Players.PlayerAdded:Connect(function(p) p.CharacterAdded:Connect(function() task.wait(1) if espActive then ApplyESP(p) end end) end)
 end)
 
--- LeftControl Keybind to Hide/Show Hub
+-- Sol Ctrl ile Kapatma/Açma Bindi (Düzeltildi)
 UserInputService.InputBegan:Connect(function(input, processed)
     if not processed and input.KeyCode == Enum.KeyCode.LeftControl then
-        MainFrame.Visible = not MainFrame.Visible
+        Panel.Visible = not Panel.Visible
     end
 end)
