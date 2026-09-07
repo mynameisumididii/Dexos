@@ -7,15 +7,15 @@ local SGui = Instance.new("ScreenGui")
 SGui.Name = "DexosHubMenu"
 SGui.Parent = game:GetService("CoreGui")
 
--- Main Panel (Simple Dark Frame)
+-- Main Panel (Simple Dark Frame - Size increased for more buttons)
 local Panel = Instance.new("Frame")
-Panel.Size = UDim2.new(0, 220, 0, 180)
-Panel.Position = UDim2.new(0.5, -110, 0.4, -90)
+Panel.Size = UDim2.new(0, 220, 0, 290)
+Panel.Position = UDim2.new(0.5, -110, 0.4, -145)
 Panel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 Panel.BorderSizePixel = 2
 Panel.BorderColor3 = Color3.fromRGB(0, 255, 150) -- Neon Green
 Panel.Active = true
-Panel.Draggable = true -- You can drag it with mouse or finger
+Panel.Draggable = true
 Panel.Parent = SGui
 
 -- Title Label (DEXOS HUB)
@@ -28,42 +28,103 @@ Title.TextSize = 14
 Title.Font = Enum.Font.SourceSansBold
 Title.Parent = Panel
 
--- BUTTON 1: WALK SPEED
-local ButtonSpeed = Instance.new("TextButton")
-ButtonSpeed.Size = UDim2.new(0, 180, 0, 40)
-ButtonSpeed.Position = UDim2.new(0, 20, 0, 50)
-ButtonSpeed.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-ButtonSpeed.Text = "Set Speed to 100"
-ButtonSpeed.TextColor3 = Color3.fromRGB(255, 255, 255)
-ButtonSpeed.TextSize = 16
-ButtonSpeed.Font = Enum.Font.SourceSansSemibold
-ButtonSpeed.Parent = Panel
+-- --- SPEED SETTINGS ---
 
-ButtonSpeed.MouseButton1Click:Connect(function()
+-- BUTTON 1: SPEED +10
+local ButtonSpeedUp = Instance.new("TextButton")
+ButtonSpeedUp.Size = UDim2.new(0, 180, 0, 35)
+ButtonSpeedUp.Position = UDim2.new(0, 20, 0, 50)
+ButtonSpeedUp.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+ButtonSpeedUp.Text = "🏃 Speed +10"
+ButtonSpeedUp.TextColor3 = Color3.fromRGB(255, 255, 255)
+ButtonSpeedUp.TextSize = 14
+ButtonSpeedUp.Font = Enum.Font.SourceSansSemibold
+ButtonSpeedUp.Parent = Panel
+
+ButtonSpeedUp.MouseButton1Click:Connect(function()
     pcall(function()
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 100
-        ButtonSpeed.Text = "Speed: 100 (Active)"
-        ButtonSpeed.BackgroundColor3 = Color3.fromRGB(0, 100, 50)
+        local hum = game.Players.LocalPlayer.Character.Humanoid
+        hum.WalkSpeed = hum.WalkSpeed + 10
     end)
 end)
 
--- BUTTON 2: HIGH JUMP
-local ButtonJump = Instance.new("TextButton")
-ButtonJump.Size = UDim2.new(0, 180, 0, 40)
-ButtonJump.Position = UDim2.new(0, 20, 0, 105)
-ButtonJump.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-ButtonJump.Text = "High Jump"
-ButtonJump.TextColor3 = Color3.fromRGB(255, 255, 255)
-ButtonJump.TextSize = 16
-ButtonJump.Font = Enum.Font.SourceSansSemibold
-ButtonJump.Parent = Panel
+-- BUTTON 2: SPEED -10
+local ButtonSpeedDown = Instance.new("TextButton")
+ButtonSpeedDown.Size = UDim2.new(0, 180, 0, 35)
+ButtonSpeedDown.Position = UDim2.new(0, 20, 0, 95)
+ButtonSpeedDown.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+ButtonSpeedDown.Text = "🚶 Speed -10"
+ButtonSpeedDown.TextColor3 = Color3.fromRGB(255, 255, 255)
+ButtonSpeedDown.TextSize = 14
+ButtonSpeedDown.Font = Enum.Font.SourceSansSemibold
+ButtonSpeedDown.Parent = Panel
 
-ButtonJump.MouseButton1Click:Connect(function()
+ButtonSpeedDown.MouseButton1Click:Connect(function()
     pcall(function()
         local hum = game.Players.LocalPlayer.Character.Humanoid
-        hum.JumpPower = 150
+        if hum.WalkSpeed > 10 then
+            hum.WalkSpeed = hum.WalkSpeed - 10
+        end
+    end)
+end)
+
+-- --- JUMP SETTINGS ---
+
+-- BUTTON 3: JUMP +20
+local ButtonJumpUp = Instance.new("TextButton")
+ButtonJumpUp.Size = UDim2.new(0, 180, 0, 35)
+ButtonJumpUp.Position = UDim2.new(0, 20, 0, 150)
+ButtonJumpUp.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+ButtonJumpUp.Text = "🚀 Jump Power +20"
+ButtonJumpUp.TextColor3 = Color3.fromRGB(255, 255, 255)
+ButtonJumpUp.TextSize = 14
+ButtonJumpUp.Font = Enum.Font.SourceSansSemibold
+ButtonJumpUp.Parent = Panel
+
+ButtonJumpUp.MouseButton1Click:Connect(function()
+    pcall(function()
+        local hum = game.Players.LocalPlayer.Character.Humanoid
         hum.UseJumpPower = true
-        ButtonJump.Text = "Jump: 150 (Active)"
-        ButtonJump.BackgroundColor3 = Color3.fromRGB(0, 100, 50)
+        hum.JumpPower = hum.JumpPower + 20
+    end)
+end)
+
+-- BUTTON 4: JUMP -20
+local ButtonJumpDown = Instance.new("TextButton")
+ButtonJumpDown.Size = UDim2.new(0, 180, 0, 35)
+ButtonJumpDown.Position = UDim2.new(0, 20, 0, 195)
+ButtonJumpDown.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+ButtonJumpDown.Text = "📉 Jump Power -20"
+ButtonJumpDown.TextColor3 = Color3.fromRGB(255, 255, 255)
+ButtonJumpDown.TextSize = 14
+ButtonJumpDown.Font = Enum.Font.SourceSansSemibold
+ButtonJumpDown.Parent = Panel
+
+ButtonJumpDown.MouseButton1Click:Connect(function()
+    pcall(function()
+        local hum = game.Players.LocalPlayer.Character.Humanoid
+        hum.UseJumpPower = true
+        if hum.JumpPower > 20 then
+            hum.JumpPower = hum.JumpPower - 20
+        end
+    end)
+end)
+
+-- BUTTON 5: RESET ALL
+local ButtonReset = Instance.new("TextButton")
+ButtonReset.Size = UDim2.new(0, 180, 0, 35)
+ButtonReset.Position = UDim2.new(0, 20, 0, 240)
+ButtonReset.BackgroundColor3 = Color3.fromRGB(80, 20, 20) -- Red button for reset
+ButtonReset.Text = "↩️ Reset to Normal"
+ButtonReset.TextColor3 = Color3.fromRGB(255, 255, 255)
+ButtonReset.TextSize = 14
+ButtonReset.Font = Enum.Font.SourceSansBold
+ButtonReset.Parent = Panel
+
+ButtonReset.MouseButton1Click:Connect(function()
+    pcall(function()
+        local hum = game.Players.LocalPlayer.Character.Humanoid
+        hum.WalkSpeed = 16
+        hum.JumpPower = 50
     end)
 end)
