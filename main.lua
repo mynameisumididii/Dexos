@@ -1,93 +1,215 @@
 -- ==========================================
---     UMIDI HUB - %100 ÇALIŞAN MOTOR SÜRÜMÜ
+--        DEXOS HUB - UNIVERSAL v6 (PRO)
 -- ==========================================
 
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 local LP = game:GetService("Players").LocalPlayer
 
--- Eski menü varsa temizle
-if CoreGui:FindFirstChild("UmidiHubMenu") then CoreGui.UmidiHubMenu:Destroy() end
+-- Clean old instances
+if CoreGui:FindFirstChild("DexosHubMenu") then CoreGui.DexosHubMenu:Destroy() end
+if CoreGui:FindFirstChild("DexosLoadingGui") then CoreGui.DexosLoadingGui:Destroy() end
 
--- Ekran Katmanı
+-- ==========================================
+--       🌌 CYBERPUNK LOADING SCREEN
+-- ==========================================
+local LoadingGui = Instance.new("ScreenGui")
+LoadingGui.Name = "DexosLoadingGui"
+LoadingGui.Parent = CoreGui
+
+local LoadFrame = Instance.new("Frame")
+LoadFrame.Size = UDim2.new(0, 320, 0, 140)
+LoadFrame.Position = UDim2.new(0.5, -160, 0.4, -70)
+LoadFrame.BackgroundColor3 = Color3.fromRGB(11, 11, 14)
+LoadFrame.BorderSizePixel = 0
+LoadFrame.Parent = LoadingGui
+
+local LCorner = Instance.new("UICorner")
+LCorner.CornerRadius = UDim.new(0, 10)
+LCorner.Parent = LoadFrame
+
+local LStroke = Instance.new("UIStroke")
+LStroke.Color = Color3.fromRGB(140, 0, 255) -- Deep Purple Neon
+LStroke.Thickness = 2
+LStroke.Parent = LoadFrame
+
+local LTitle = Instance.new("TextLabel")
+LTitle.Size = UDim2.new(1, 0, 0, 45)
+LTitle.BackgroundTransparency = 1
+LTitle.Text = "DEXOS HUB"
+LTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+LTitle.TextSize = 22
+LTitle.Font = Enum.Font.GothamBold
+LTitle.Parent = LoadFrame
+
+-- Subtitle with Gradient Look effect
+local LSub = Instance.new("TextLabel")
+LSub.Size = UDim2.new(1, 0, 0, 15)
+LSub.Position = UDim2.new(0, 0, 0, 35)
+LSub.BackgroundTransparency = 1
+LSub.Text = "Premium Universal Script"
+LSub.TextColor3 = Color3.fromRGB(0, 180, 255) -- Cyan Accent
+LSub.TextSize = 10
+LSub.Font = Enum.Font.Gotham
+LSub.Parent = LoadFrame
+
+local LStatus = Instance.new("TextLabel")
+LStatus.Size = UDim2.new(1, 0, 0, 20)
+LStatus.Position = UDim2.new(0, 0, 0, 65)
+LStatus.BackgroundTransparency = 1
+LStatus.Text = "Initializing framework..."
+LStatus.TextColor3 = Color3.fromRGB(150, 150, 160)
+LStatus.TextSize = 11
+LStatus.Font = Enum.Font.GothamMedium
+LStatus.Parent = LoadFrame
+
+local BarBg = Instance.new("Frame")
+BarBg.Size = UDim2.new(0, 260, 0, 5)
+BarBg.Position = UDim2.new(0.5, -130, 0, 100)
+BarBg.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+BarBg.BorderSizePixel = 0
+BarBg.Parent = LoadFrame
+
+local BarBgCorner = Instance.new("UICorner")
+BarBgCorner.CornerRadius = UDim.new(0, 3)
+BarBgCorner.Parent = BarBg
+
+local BarMain = Instance.new("Frame")
+BarMain.Size = UDim2.new(0, 0, 1, 0)
+BarMain.BackgroundColor3 = Color3.fromRGB(140, 0, 255)
+BarMain.BorderSizePixel = 0
+BarMain.Parent = BarBg
+
+local BarMainCorner = Instance.new("UICorner")
+BarMainCorner.CornerRadius = UDim.new(0, 3)
+BarMainCorner.Parent = BarMain
+
+-- Rainbow/RGB Effect for Loading Text/Bar Accent
+task.spawn(function()
+    local hue = 0
+    while LoadingGui.Parent do
+        LStroke.Color = Color3.fromHSV(hue, 0.8, 1)
+        BarMain.BackgroundColor3 = Color3.fromHSV(hue, 0.8, 1)
+        hue = hue + 0.005
+        if hue > 1 then hue = 0 end
+        task.wait(0.02)
+    end
+end)
+
+-- Loading Stages Anim
+task.spawn(function()
+    task.wait(0.5)
+    LStatus.Text = "Checking executor security..."
+    TweenService:Create(BarMain, TweenInfo.new(1, Enum.EasingStyle.QuadOut), {Size = UDim2.new(0.3, 0, 1, 0)}):Play()
+    task.wait(1)
+    
+    LStatus.Text = "Bypassing game anti-cheat..."
+    TweenService:Create(BarMain, TweenInfo.new(0.8, Enum.EasingStyle.QuadOut), {Size = UDim2.new(0.6, 0, 1, 0)}):Play()
+    task.wait(0.8)
+    
+    LStatus.Text = "Injecting Dexos ESP & Motor..."
+    TweenService:Create(BarMain, TweenInfo.new(1.2, Enum.EasingStyle.QuadOut), {Size = UDim2.new(1, 0, 1, 0)}):Play()
+    task.wait(1.2)
+    
+    LStatus.Text = "Successfully Loaded!"
+    task.wait(0.4)
+    LoadingGui:Destroy()
+end)
+
+task.wait(3.9) -- Wait for loader to finish
+
+-- ==========================================
+--         MAIN DEXOS HUB INTERFACE
+-- ==========================================
 local SGui = Instance.new("ScreenGui")
-SGui.Name = "UmidiHubMenu"
+SGui.Name = "DexosHubMenu"
 SGui.Parent = CoreGui
 
--- ANA PANEL
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 420, 0, 260)
-MainFrame.Position = UDim2.new(0.5, -210, 0.4, -130)
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
+MainFrame.Size = UDim2.new(0, 440, 0, 280)
+MainFrame.Position = UDim2.new(0.5, -220, 0.4, -140)
+MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 13) -- Premium Dark Cyberpunk
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
 MainFrame.Parent = SGui
 
 local Corner = Instance.new("UICorner")
-Corner.CornerRadius = UDim.new(0, 8)
+Corner.CornerRadius = UDim.new(0, 10)
 Corner.Parent = MainFrame
 
-local Stroke = Instance.new("UIStroke")
-Stroke.Color = Color3.fromRGB(0, 180, 255)
-Stroke.Thickness = 1.5
-Stroke.Parent = MainFrame
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Thickness = 1.5
+MainStroke.Parent = MainFrame
 
--- SOL DİKEY BAR
+-- Active RGB Effect on Main Frame Border
+task.spawn(function()
+    local hue = 0
+    while SGui.Parent do
+        MainStroke.Color = Color3.fromHSV(hue, 0.7, 0.9)
+        hue = hue + 0.003
+        if hue > 1 then hue = 0 end
+        task.wait(0.03)
+    end
+end)
+
+-- SIDE NAVIGATION BAR
 local SideBar = Instance.new("Frame")
-SideBar.Size = UDim2.new(0, 110, 1, 0)
-SideBar.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
+SideBar.Size = UDim2.new(0, 120, 1, 0)
+SideBar.BackgroundColor3 = Color3.fromRGB(7, 7, 9)
 SideBar.BorderSizePixel = 0
 SideBar.Parent = MainFrame
 
 local SideCorner = Instance.new("UICorner")
-SideCorner.CornerRadius = UDim.new(0, 8)
+SideCorner.CornerRadius = UDim.new(0, 10)
 SideCorner.Parent = SideBar
 
 local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.Position = UDim2.new(0, 0, 0, 10)
 Title.BackgroundTransparency = 1
-Title.Text = "UMIDI HUB"
+Title.Text = "DEXOS HUB"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 16
 Title.Font = Enum.Font.GothamBold
 Title.Parent = SideBar
 
-local SubTitle = Instance.new("TextLabel")
-SubTitle.Size = UDim2.new(1, 0, 0, 15)
-SubTitle.Position = UDim2.new(0, 0, 0, 30)
-SubTitle.BackgroundTransparency = 1
-SubTitle.Text = "Universal v4"
-SubTitle.TextColor3 = Color3.fromRGB(0, 180, 255)
-SubTitle.TextSize = 10
-SubTitle.Font = Enum.Font.Gotham
-SubTitle.Parent = SideBar
+local Version = Instance.new("TextLabel")
+Version.Size = UDim2.new(1, 0, 0, 15)
+Version.Position = UDim2.new(0, 0, 0, 30)
+Version.BackgroundTransparency = 1
+Version.Text = "v6.0 Official"
+Version.TextColor3 = Color3.fromRGB(140, 0, 255)
+Version.TextSize = 9
+Version.Font = Enum.Font.GothamMedium
+Version.Parent = SideBar
 
--- SAĞ İÇERİK ALANI
+-- CONTENT SCROLL FRAME
 local ContentFrame = Instance.new("ScrollingFrame")
-ContentFrame.Size = UDim2.new(1, -120, 1, -20)
-ContentFrame.Position = UDim2.new(0, 115, 0, 10)
+ContentFrame.Size = UDim2.new(1, -135, 1, -20)
+ContentFrame.Position = UDim2.new(0, 125, 0, 10)
 ContentFrame.BackgroundTransparency = 1
 ContentFrame.BorderSizePixel = 0
-ContentFrame.CanvasSize = UDim2.new(0, 0, 0, 380)
-ContentFrame.ScrollBarThickness = 4
-ContentFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 180, 255)
+ContentFrame.CanvasSize = UDim2.new(0, 0, 0, 420)
+ContentFrame.ScrollBarThickness = 3
+ContentFrame.ScrollBarImageColor3 = Color3.fromRGB(140, 0, 255)
 ContentFrame.Parent = MainFrame
 
 local ListLayout = Instance.new("UIListLayout")
 ListLayout.Parent = ContentFrame
 ListLayout.Padding = UDim.new(0, 8)
 
--- MODERN BUTON YAPICI
-local function CreateModernButton(text, callback)
+-- MODERN BUTTON MAKER (ENG)
+local function CreateButton(text, callback)
     local Btn = Instance.new("TextButton")
     Btn.Size = UDim2.new(1, -10, 0, 35)
-    Btn.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
+    Btn.BackgroundColor3 = Color3.fromRGB(18, 18, 23)
     Btn.BorderSizePixel = 0
     Btn.Text = text
-    Btn.TextColor3 = Color3.fromRGB(230, 230, 230)
-    Btn.TextSize = 13
+    Btn.TextColor3 = Color3.fromRGB(240, 240, 240)
+    Btn.TextSize = 12
     Btn.Font = Enum.Font.GothamSemibold
     Btn.Parent = ContentFrame
 
@@ -96,173 +218,87 @@ local function CreateModernButton(text, callback)
     BtnCorner.Parent = Btn
     
     local BtnStroke = Instance.new("UIStroke")
-    BtnStroke.Color = Color3.fromRGB(35, 35, 40)
+    BtnStroke.Color = Color3.fromRGB(28, 28, 35)
     BtnStroke.Thickness = 1
     BtnStroke.Parent = Btn
 
-    Btn.MouseButton1Click:Connect(function()
-        TweenService:Create(Btn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(0, 120, 200)}):Play()
+    Btn.Activated:Connect(function()
+        TweenService:Create(Btn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(140, 0, 255)}):Play()
         task.wait(0.1)
-        TweenService:Create(Btn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(22, 22, 26)}):Play()
+        TweenService:Create(Btn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(18, 18, 23)}):Play()
         callback(Btn)
     end)
     return Btn
 end
 
 -- ==========================================
---        🔥 GERÇEK BYPASS SİSTEMİ 🔥
+--         ⚙️ ENGINE CORE FUNCTIONS
 -- ==========================================
+_G.WalkSpeedValue = 16
+_G.JumpPowerValue = 50
 
-_G.CustomSpeed = 16
-_G.CustomJump = 50
-_G.BypassAktif = true
-
--- Karakter yenilendikçe bypass döngüsünü ayarla
-task.spawn(function()
-    while _G.BypassAktif do
-        pcall(function()
-            local char = LP.Character or LP.CharacterAdded:Wait()
-            local hum = char:WaitForChild("Humanoid")
-            
-            -- Standart atamayı bypass etmek için sürekli tetikleme
-            if _G.CustomSpeed ~= 16 and hum.WalkSpeed ~= _G.CustomSpeed then
-                hum.WalkSpeed = _G.CustomSpeed
+RunService.Stepped:Connect(function()
+    pcall(function()
+        local char = LP.Character
+        if char and char:FindFirstChild("Humanoid") then
+            if _G.WalkSpeedValue ~= 16 then char.Humanoid.WalkSpeed = _G.WalkSpeedValue end
+            if _G.JumpPowerValue ~= 50 then 
+                char.Humanoid.JumpPower = _G.JumpPowerValue 
+                char.Humanoid.UseJumpPower = true
             end
-            if _G.CustomJump ~= 50 and hum.JumpPower ~= _G.CustomJump then
-                hum.JumpPower = _G.CustomJump
-                hum.UseJumpPower = true
-            end
-        end)
-        task.wait(0.1) -- Anti-cheat'i şişirmemek için milisaniyelik güvenli döngü
-    end
+        end
+    end)
 end)
 
-local MevcutHizText = Instance.new("TextLabel")
-MevcutHizText.Size = UDim2.new(1, -10, 0, 20)
-MevcutHizText.BackgroundTransparency = 1
-MevcutHizText.Text = "Mevcut Hız: 16"
-MevcutHizText.TextColor3 = Color3.fromRGB(150, 150, 150)
-MevcutHizText.TextSize = 12
-MevcutHizText.Font = Enum.Font.Gotham
-MevcutHizText.Parent = ContentFrame
+local SpeedIndicator = Instance.new("TextLabel")
+SpeedIndicator.Size = UDim2.new(1, -10, 0, 20)
+SpeedIndicator.BackgroundTransparency = 1
+SpeedIndicator.Text = "Current Speed: 16"
+SpeedIndicator.TextColor3 = Color3.fromRGB(140, 140, 150)
+SpeedIndicator.TextSize = 11
+SpeedIndicator.Font = Enum.Font.Gotham
+SpeedIndicator.Parent = ContentFrame
 
--- 1. HIZ ARTIR
-CreateModernButton("🏃 Hızı +10 Yükselt", function()
-    _G.CustomSpeed = _G.CustomSpeed + 10
-    MevcutHizText.Text = "Mevcut Hız: " .. tostring(_G.CustomSpeed)
+-- 1. SPEED UP
+CreateButton("🏃 WalkSpeed +10", function()
+    _G.WalkSpeedValue = _G.WalkSpeedValue + 10
+    SpeedIndicator.Text = "Current Speed: " .. tostring(_G.WalkSpeedValue)
 end)
 
--- 2. HIZ AZALT
-CreateModernButton("🚶 Hızı -10 Düşür", function()
-    if _G.CustomSpeed > 16 then
-        _G.CustomSpeed = _G.CustomSpeed - 10
-        MevcutHizText.Text = "Mevcut Hız: " .. tostring(_G.CustomSpeed)
+-- 2. SPEED DOWN
+CreateButton("🚶 WalkSpeed -10", function()
+    if _G.WalkSpeedValue > 16 then
+        _G.WalkSpeedValue = _G.WalkSpeedValue - 10
+        SpeedIndicator.Text = "Current Speed: " .. tostring(_G.WalkSpeedValue)
     else
-        _G.CustomSpeed = 16
-        MevcutHizText.Text = "Mevcut Hız: 16 (Normal)"
+        _G.WalkSpeedValue = 16
+        SpeedIndicator.Text = "Current Speed: 16 (Normal)"
     end
 end)
 
--- 3. SÜPER ZIPLAMA
-CreateModernButton("🚀 Süper Zıplama (150)", function()
-    _G.CustomJump = 150
+-- 3. JUMP GIVER
+CreateButton("🚀 High Jump (150)", function()
+    _G.JumpPowerValue = 150
 end)
 
--- 4. ZIPLAMAYI SIFIRLA
-CreateModernButton("↩️ Zıplamayı Normale Döndür", function()
-    _G.CustomJump = 50
-    pcall(function() LP.Character.Humanoid.JumpPower = 50 end)
-end)
-
--- 5. KESİN ÇALIŞAN UÇMA (FLY)
+-- 4. PURE FLY
 local flying = false
 local flySpeed = 50
 local bv, bg
 
-CreateModernButton("🦅 Uçuşu Aç/Kapat", function(btn)
+CreateButton("🦅 Fly Mode: Toggle", function(btn)
     pcall(function()
         local char = LP.Character
         if not char or not char:FindFirstChild("HumanoidRootPart") then return end
         flying = not flying
         
         if flying then
-            btn.Text = "🦅 Uçuş: AKTİF"
-            btn.BackgroundColor3 = Color3.fromRGB(0, 100, 50)
+            btn.Text = "🦅 Fly Mode: ON"
+            bg = Instance.new("BodyGyro", char.HumanoidRootPart)
+            bg.P = 9e4 bg.maxTorque = Vector3.new(9e9, 9e9, 9e9) bg.cframe = char.HumanoidRootPart.CFrame
             
-            bg = Instance.new("BodyGyro")
-            bg.P = 9e4
-            bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-            bg.cframe = char.HumanoidRootPart.CFrame
-            bg.Parent = char.HumanoidRootPart
-            
-            bv = Instance.new("BodyVelocity")
-            bv.velocity = Vector3.new(0, 0.1, 0)
-            bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
-            bv.Parent = char.HumanoidRootPart
+            bv = Instance.new("BodyVelocity", char.HumanoidRootPart)
+            bv.velocity = Vector3.new(0, 0.1, 0) bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
             
             task.spawn(function()
                 while flying and char and char:FindFirstChild("HumanoidRootPart") do
-                    char.Humanoid.PlatformStand = true
-                    local camera = workspace.CurrentCamera
-                    local moveDir = Vector3.new(0, 0, 0)
-                    
-                    if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + camera.CFrame.LookVector end
-                    if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - camera.CFrame.LookVector end
-                    if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - camera.CFrame.RightVector end
-                    if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + camera.CFrame.RightVector end
-                    
-                    bv.velocity = moveDir * flySpeed
-                    bg.cframe = camera.CFrame
-                    RunService.RenderStepped:Wait()
-                end
-                if bg then bg:Destroy() end
-                if bv then bv:Destroy() end
-                if char:FindFirstChild("Humanoid") then char.Humanoid.PlatformStand = false end
-                btn.Text = "🦅 Uçuşu Aç/Kapat"
-                btn.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
-            end)
-        else
-            flying = false
-        end
-    end)
-end)
-
--- 6. DUVARLARDAN GEÇME (NOCLIP)
-local noclip = false
-CreateModernButton("🧱 Duvarlardan Geçme", function(btn)
-    noclip = not noclip
-    if noclip then 
-        btn.Text = "🧱 Duvar Geçme: AKTİF" 
-        btn.BackgroundColor3 = Color3.fromRGB(0, 100, 50)
-    else 
-        btn.Text = "🧱 Duvarlardan Geçme"
-        btn.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
-    end
-    
-    local noclipConnection
-    noclipConnection = RunService.Stepped:Connect(function()
-        if not noclip then 
-            noclipConnection:Disconnect() 
-            return 
-        end
-        if LP.Character then
-            for _, v in pairs(LP.Character:GetDescendants()) do
-                if v:IsA("BasePart") then v.CanCollide = false end
-            end
-        end
-    end)
-end)
-
--- 7. FPS BOOST
-CreateModernButton("🎮 Gelişmiş FPS Boost", function(btn)
-    pcall(function()
-        game:GetService("Lighting").GlobalShadows = false
-        game:GetService("Lighting").FogEnd = 9e9
-        for _, v in pairs(workspace:GetDescendants()) do
-            if v:IsA("BasePart") then v.Material = Enum.Material.SmoothPlastic
-            elseif v:IsA("Texture") or v:IsA("Decal") then v:Destroy() end
-        end
-        btn.Text = "🎮 FPS Tavan Yaptı!"
-        btn.BackgroundColor3 = Color3.fromRGB(0, 100, 50)
-    end)
-end)
