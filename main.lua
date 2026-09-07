@@ -15,7 +15,7 @@ Panel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 Panel.BorderSizePixel = 2
 Panel.BorderColor3 = Color3.fromRGB(0, 255, 150) -- Neon Green
 Panel.Active = true
-Panel.Draggable = true
+Panel.Draggable = true -- You can drag it with mouse or finger
 Panel.Parent = SGui
 
 -- Title Label (DEXOS HUB)
