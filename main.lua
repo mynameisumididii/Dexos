@@ -68,7 +68,7 @@ Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.ZIndex = 3
 Title.Parent = TitleBar
 
--- --- OPEN EYE ICON (Sadece menü kapalıyken sol ortada görünecek)
+-- --- OPEN BTN
 local OpenBtn = Instance.new("TextButton")
 OpenBtn.Size = UDim2.new(0, 60, 0, 35)
 OpenBtn.Position = UDim2.new(0, 10, 0.5, -17)
@@ -91,7 +91,7 @@ OpenStroke.Color = Color3.fromRGB(180, 0, 255)
 OpenStroke.Thickness = 1
 OpenStroke.Parent = OpenBtn
 
--- --- CLOSE BUTTON (Title Bar'ın sağ köşesindeki X)
+-- --- CLOSE BUTTON
 local CloseBtn = Instance.new("TextButton")
 CloseBtn.Size = UDim2.new(0, 30, 0, 30)
 CloseBtn.Position = UDim2.new(1, -35, 0, 5)
@@ -160,9 +160,6 @@ local function CreateButton(text, callback)
     return Btn
 end
 
--- ==========================================
---         ⚙️ ENGINE CORE UTILITIES
--- ==========================================
 _G.StepSpeed = 0
 _G.CustomJumpBoost = 0
 _G.InfJump = false
@@ -174,12 +171,10 @@ RunService.RenderStepped:Connect(function()
         local root = char and char:FindFirstChild("HumanoidRootPart")
         local hum = char and char:FindFirstChild("Humanoid")
         
-        -- WalkSpeed Multiplier
         if root and hum and hum.MoveDirection.Magnitude > 0 and _G.StepSpeed > 0 then
             root.CFrame = root.CFrame + (hum.MoveDirection * (_G.StepSpeed * 0.05))
         end
         
-        -- Custom Jump Power Multiplier
         if _G.CustomJumpBoost > 0 and UserInputService:IsKeyDown(Enum.KeyCode.Space) then
             root.Velocity = Vector3.new(root.Velocity.X, 50 + _G.CustomJumpBoost, root.Velocity.Z)
         end
@@ -208,44 +203,37 @@ end
 
 -- --- FEATURES CONFIG ---
 
--- 1. SPEED UP (+5)
 CreateButton("🏃 WalkSpeed +5", function()
     _G.StepSpeed = _G.StepSpeed + 1
     UpdateStats()
 end)
 
--- 2. SPEED DOWN (-5)
 CreateButton("🚶 WalkSpeed -5", function()
     if _G.StepSpeed > 0 then _G.StepSpeed = _G.StepSpeed - 1 else _G.StepSpeed = 0 end
     UpdateStats()
 end)
 
--- 3. JUMP UP (+5)
 CreateButton("🚀 Jump Power +5", function()
     _G.CustomJumpBoost = _G.CustomJumpBoost + 5
     UpdateStats()
 end)
 
--- 4. JUMP DOWN (-5)
 CreateButton("📉 Jump Power -5", function()
     if _G.CustomJumpBoost > 0 then _G.CustomJumpBoost = _G.CustomJumpBoost - 5 else _G.CustomJumpBoost = 0 end
     UpdateStats()
 end)
 
--- 5. RESET ALL STATS
 CreateButton("↩️ Reset Stats to Normal", function()
     _G.StepSpeed = 0
     _G.CustomJumpBoost = 0
     UpdateStats()
 end)
 
--- 6. INFINITE JUMP
 CreateButton("♾️ Infinite Jump: Toggle", function(btn)
     _G.InfJump = not _G.InfJump
     if _G.InfJump then btn.Text = "♾️ Infinite Jump: ON" else btn.Text = "♾️ Infinite Jump: Toggle" end
 end)
 
--- 7. SMOOTH FLY SYSTEM
 local flying = false
 local flySpeed = 60
 local f_bv, f_bg
@@ -283,7 +271,6 @@ CreateButton("🦅 Fly Mode: Toggle", function(btn)
     end)
 end)
 
--- 8. NOCLIP
 local noclip = false
 CreateButton("🧱 Noclip: Toggle", function(btn)
     noclip = not noclip
@@ -292,3 +279,15 @@ CreateButton("🧱 Noclip: Toggle", function(btn)
     nc = RunService.Stepped:Connect(function()
         if not noclip then nc:Disconnect() return end
         if LP.Character then
+            for _, v in pairs(LP.Character:GetDescendants()) do
+                if v:IsA("BasePart") then v.CanCollide = false end
+            end
+        end
+    end)
+end)
+
+local espActive = false
+CreateButton("👁️ Player ESP: Toggle", function(btn)
+    espActive = not espActive
+    if espActive then btn.Text = "👁️ ESP: ON" else btn.Text = "👁️ Player ESP: Toggle" end
+    local function ApplyESP(player)
