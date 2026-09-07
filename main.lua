@@ -1,5 +1,5 @@
 -- ==========================================
---     DEXOS HUB - PHYSICAL BYPASS SÜRÜMÜ
+--     DEXOS HUB - ALL-IN-ONE PREMIUM CORE
 -- ==========================================
 
 local CoreGui = game:GetService("CoreGui")
@@ -98,17 +98,15 @@ end)
 
 task.spawn(function()
     task.wait(0.5)
-    LStatus.Text = "Loading Physics Bypass..."
+    LStatus.Text = "Bypassing Game Engine..."
     TweenService:Create(BarMain, TweenInfo.new(1, Enum.EasingStyle.QuadOut), {Size = UDim2.new(0.3, 0, 1, 0)}):Play()
     task.wait(1)
-    LStatus.Text = "Hooking Engine Metamethods..."
+    LStatus.Text = "Injecting Dexos Motor..."
     TweenService:Create(BarMain, TweenInfo.new(0.8, Enum.EasingStyle.QuadOut), {Size = UDim2.new(0.6, 0, 1, 0)}):Play()
     task.wait(0.8)
-    LStatus.Text = "Injecting Dexos ESP & Fly..."
+    LStatus.Text = "Ready to Play!"
     TweenService:Create(BarMain, TweenInfo.new(1.2, Enum.EasingStyle.QuadOut), {Size = UDim2.new(1, 0, 1, 0)}):Play()
     task.wait(1.2)
-    LStatus.Text = "Successfully Loaded!"
-    task.wait(0.4)
     LoadingGui:Destroy()
 end)
 
@@ -222,7 +220,7 @@ local function CreateButton(text, callback)
 end
 
 -- ==========================================
---     🔥 ENGINE BYPASS & FUNCTIONS 🔥
+--     🔥 CORE VECTOR BYPASS ENGINE 🔥
 -- ==========================================
 _G.FizikselHiz = 0
 _G.JumpBoostActive = false
