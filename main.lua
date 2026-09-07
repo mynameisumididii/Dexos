@@ -1,18 +1,18 @@
 -- Clean old instances if exists
-local OldMenu = game:GetService("CoreGui"):FindFirstChild("DexosHubMenu")
-if OldMenu then OldMenu:Destroy() end
+local LP = game:GetService("Players").LocalPlayer
+local PlayerGui = LP:WaitForChild("PlayerGui")
 
-local CoreGui = game:GetService("CoreGui")
+if PlayerGui:FindFirstChild("DexosHubMenu") then PlayerGui.DexosHubMenu:Destroy() end
+
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
-local LP = game:GetService("Players").LocalPlayer
 
--- Screen Layer (Xeno Safe Layer)
+-- Screen Layer (Xeno Safe PlayerGui)
 local SGui = Instance.new("ScreenGui")
 SGui.Name = "DexosHubMenu"
 SGui.ResetOnSpawn = false
-SGui.Parent = CoreGui
+SGui.Parent = PlayerGui
 
 -- Main Panel (Simple Matte Grey Frame)
 local Panel = Instance.new("Frame")
@@ -311,3 +311,4 @@ CreateButton(MPage, "Fly Mode: Toggle", function(btn)
             f_bg.cframe = root.CFrame f_bg.Parent = root
             f_bv = Instance.new("BodyVelocity") f_bv.velocity = Vector3.new(0, 0.1, 0) f_bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
             f_bv.Parent = root
+            task.spawn(function()
