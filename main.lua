@@ -1,5 +1,5 @@
 -- Clean old instances if exists
-local OldMenu = game:GetService("CoreGui"):FindFirstChild("DexosHubMenu")
+local OldMenu = game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("DexosHubMenu")
 if OldMenu then OldMenu:Destroy() end
 
 local CoreGui = game:GetService("CoreGui")
@@ -7,16 +7,18 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local LP = game:GetService("Players").LocalPlayer
+local PlayerGui = LP:WaitForChild("PlayerGui")
 
--- Screen Layer
+-- Screen Layer (Xeno Safe PlayerGui)
 local SGui = Instance.new("ScreenGui")
 SGui.Name = "DexosHubMenu"
-SGui.Parent = CoreGui
+SGui.ResetOnSpawn = false
+SGui.Parent = PlayerGui
 
 -- Main Panel (Simple Matte Grey Frame)
 local Panel = Instance.new("Frame")
-Panel.Size = UDim2.new(0, 420, 0, 310)
-Panel.Position = UDim2.new(0.5, -210, 0.4, -155)
+Panel.Size = UDim2.new(0, 440, 0, 310)
+Panel.Position = UDim2.new(0.5, -220, 0.4, -155)
 Panel.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
 Panel.BorderSizePixel = 0
 Panel.Active = true
@@ -49,7 +51,7 @@ local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, -50, 1, 0)
 Title.Position = UDim2.new(0, 15, 0, 0)
 Title.BackgroundTransparency = 1
-Title.Text = "DEXOS HUB  //  UNIVERSAL v3"
+Title.Text = "DEXOS HUB  //  UNIVERSAL v4"
 Title.TextColor3 = Color3.fromRGB(210, 210, 215)
 Title.TextSize = 13
 Title.Font = Enum.Font.GothamBold
@@ -101,23 +103,93 @@ OpenBtn.Activated:Connect(function()
     OpenBtn.Visible = false
 end)
 
--- Scrolling Content Frame
-local Content = Instance.new("ScrollingFrame")
-Content.Size = UDim2.new(1, -20, 1, -55)
-Content.Position = UDim2.new(0, 10, 0, 45)
-Content.BackgroundTransparency = 1
-Content.BorderSizePixel = 0
-Content.CanvasSize = UDim2.new(0, 0, 0, 480)
-Content.ScrollBarThickness = 3
-Content.ScrollBarImageColor3 = Color3.fromRGB(60, 60, 65)
-Content.ZIndex = 2
-Content.Parent = Panel
+-- Left Sidebar Navigation
+local Sidebar = Instance.new("Frame")
+Sidebar.Size = UDim2.new(0, 110, 1, -35)
+Sidebar.Position = UDim2.new(0, 0, 0, 35)
+Sidebar.BackgroundColor3 = Color3.fromRGB(22, 22, 24)
+Sidebar.ZIndex = 2
+Sidebar.Parent = Panel
 
-local ListLayout = Instance.new("UIListLayout")
-ListLayout.Parent = Content
-ListLayout.Padding = UDim.new(0, 8)
+local SideCorner = Instance.new("UICorner")
+SideCorner.CornerRadius = UDim.new(0, 8)
+SideCorner.Parent = Sidebar
 
-local function CreateButton(text, callback)
+local sll = Instance.new("UIListLayout")
+sll.Parent = Sidebar
+sll.Padding = UDim.new(0, 4)
+sll.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+-- Right Content Container
+local MainContent = Instance.new("Frame")
+MainContent.Size = UDim2.new(1, -125, 1, -45)
+MainContent.Position = UDim2.new(0, 120, 0, 40)
+MainContent.BackgroundTransparency = 1
+MainContent.ZIndex = 2
+MainContent.Parent = Panel
+
+local Pages = {}
+local function CreatePage(name)
+    local Scroller = Instance.new("ScrollingFrame")
+    Scroller.Size = UDim2.new(1, 0, 1, 0)
+    Scroller.BackgroundTransparency = 1
+    Scroller.BorderSizePixel = 0
+    Scroller.CanvasSize = UDim2.new(0, 0, 0, 420)
+    Scroller.ScrollBarThickness = 2
+    Scroller.ScrollBarImageColor3 = Color3.fromRGB(50, 50, 55)
+    Scroller.Visible = false
+    Scroller.ZIndex = 3
+    Scroller.Parent = MainContent
+
+    local ll = Instance.new("UIListLayout")
+    ll.Parent = Scroller
+    ll.Padding = UDim.new(0, 8)
+
+    Pages[name] = Scroller
+
+    local TabBtn = Instance.new("TextButton")
+    TabBtn.Size = UDim2.new(0, 100, 0, 32)
+    TabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
+    TabBtn.Text = name
+    TabBtn.TextColor3 = Color3.fromRGB(160, 160, 165)
+    TabBtn.TextSize = 11
+    TabBtn.Font = Enum.Font.GothamSemibold
+    TabBtn.ZIndex = 3
+    TabBtn.Parent = Sidebar
+
+    local tbc = Instance.new("UICorner")
+    tbc.CornerRadius = UDim.new(0, 4)
+    tbc.Parent = TabBtn
+
+    TabBtn.Activated:Connect(function()
+        for _, p in pairs(Pages) do p.Visible = false end
+        for _, b in pairs(Sidebar:GetChildren()) do 
+            if b:IsA("TextButton") then b.TextColor3 = Color3.fromRGB(160, 160, 165) end 
+        end
+        Scroller.Visible = true 
+        TabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end)
+    return Scroller
+end
+
+-- Generate Tabs
+local HPage = CreatePage("Home") 
+local MPage = CreatePage("Movement") 
+local VPage = CreatePage("Visuals") 
+Pages["Home"].Visible = true
+
+-- Home Credit Info
+local Credit = Instance.new("TextLabel")
+Credit.Size = UDim2.new(1, -5, 0, 40)
+Credit.BackgroundTransparency = 1
+Credit.Text = "This script was made by umididii."
+Credit.TextColor3 = Color3.fromRGB(200, 200, 205)
+Credit.TextSize = 12
+Credit.Font = Enum.Font.GothamSemibold
+Credit.ZIndex = 4
+Credit.Parent = HPage
+
+local function CreateButton(page, text, callback)
     local Btn = Instance.new("TextButton")
     Btn.Size = UDim2.new(1, -5, 0, 35)
     Btn.BackgroundColor3 = Color3.fromRGB(38, 38, 42)
@@ -126,8 +198,8 @@ local function CreateButton(text, callback)
     Btn.TextColor3 = Color3.fromRGB(200, 200, 205)
     Btn.TextSize = 12
     Btn.Font = Enum.Font.GothamSemibold
-    Btn.ZIndex = 3
-    Btn.Parent = Content
+    Btn.ZIndex = 4
+    Btn.Parent = page
 
     local BtnCorner = Instance.new("UICorner")
     BtnCorner.CornerRadius = UDim.new(0, 5)
@@ -154,14 +226,17 @@ _G.StepSpeed = 0
 _G.CustomJumpBoost = 0
 _G.InfJump = false
 
+-- Physical Core Loop
 RunService.RenderStepped:Connect(function()
     pcall(function()
         local char = LP.Character
         local root = char and char:FindFirstChild("HumanoidRootPart")
         local hum = char and char:FindFirstChild("Humanoid")
+        
         if root and hum and hum.MoveDirection.Magnitude > 0 and _G.StepSpeed > 0 then
             root.CFrame = root.CFrame + (hum.MoveDirection * (_G.StepSpeed * 0.05))
         end
+        
         if _G.CustomJumpBoost > 0 and UserInputService:IsKeyDown(Enum.KeyCode.Space) then
             root.Velocity = Vector3.new(root.Velocity.X, 50 + _G.CustomJumpBoost, root.Velocity.Z)
         end
@@ -181,8 +256,8 @@ Indicator.Text = "Speed Level: 0  ||  Jump Level: 0"
 Indicator.TextColor3 = Color3.fromRGB(160, 160, 165)
 Indicator.TextSize = 11
 Indicator.Font = Enum.Font.Gotham
-Indicator.ZIndex = 3
-Indicator.Parent = Content
+Indicator.ZIndex = 4
+Indicator.Parent = MPage
 
 local function UpdateStats()
     Indicator.Text = "Speed Level: " .. tostring(_G.StepSpeed) .. "  ||  Jump Level: " .. tostring(_G.CustomJumpBoost)
@@ -190,33 +265,33 @@ end
 
 -- --- FEATURES CONFIG ---
 
-CreateButton("WalkSpeed +5", function()
+CreateButton(MPage, "WalkSpeed +5", function()
     _G.StepSpeed = _G.StepSpeed + 1
     UpdateStats()
 end)
 
-CreateButton("WalkSpeed -5", function()
+CreateButton(MPage, "WalkSpeed -5", function()
     if _G.StepSpeed > 0 then _G.StepSpeed = _G.StepSpeed - 1 else _G.StepSpeed = 0 end
     UpdateStats()
 end)
 
-CreateButton("Jump Power +5", function()
+CreateButton(MPage, "Jump Power +5", function()
     _G.CustomJumpBoost = _G.CustomJumpBoost + 5
     UpdateStats()
 end)
 
-CreateButton("Jump Power -5", function()
+CreateButton(MPage, "Jump Power -5", function()
     if _G.CustomJumpBoost > 0 then _G.CustomJumpBoost = _G.CustomJumpBoost - 5 else _G.CustomJumpBoost = 0 end
     UpdateStats()
 end)
 
-CreateButton("Reset Stats to Normal", function()
+CreateButton(MPage, "Reset Stats to Normal", function()
     _G.StepSpeed = 0
     _G.CustomJumpBoost = 0
     UpdateStats()
 end)
 
-CreateButton("Infinite Jump: Toggle", function(btn)
+CreateButton(MPage, "Infinite Jump: Toggle", function(btn)
     _G.InfJump = not _G.InfJump
     if _G.InfJump then btn.Text = "Infinite Jump: ON" else btn.Text = "Infinite Jump: Toggle" end
 end)
@@ -224,7 +299,7 @@ end)
 local flying = false
 local flySpeed = 60
 local f_bv, f_bg
-CreateButton("Fly Mode: Toggle", function(btn)
+CreateButton(MPage, "Fly Mode: Toggle", function(btn)
     pcall(function()
         local char = LP.Character
         local root = char and char:FindFirstChild("HumanoidRootPart")
@@ -235,54 +310,3 @@ CreateButton("Fly Mode: Toggle", function(btn)
             btn.BackgroundColor3 = Color3.fromRGB(48, 48, 52)
             f_bg = Instance.new("BodyGyro") f_bg.P = 9e4 f_bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
             f_bg.cframe = root.CFrame f_bg.Parent = root
-            f_bv = Instance.new("BodyVelocity") f_bv.velocity = Vector3.new(0, 0.1, 0) f_bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
-            f_bv.Parent = root
-            task.spawn(function()
-                while flying and char and root.Parent do
-                    char.Humanoid.PlatformStand = true
-                    local camera = workspace.CurrentCamera
-                    local moveDir = Vector3.new(0, 0, 0)
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + camera.CFrame.LookVector end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - camera.CFrame.LookVector end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - camera.CFrame.RightVector end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + camera.CFrame.RightVector end
-                    f_bv.velocity = moveDir * flySpeed
-                    f_bg.cframe = camera.CFrame
-                    task.wait()
-                end
-                if f_bg then f_bg:Destroy() end
-                if f_bv then f_bv:Destroy() end
-                if char:FindFirstChild("Humanoid") then char.Humanoid.PlatformStand = false end
-                btn.Text = "Fly Mode: Toggle"
-                btn.BackgroundColor3 = Color3.fromRGB(38, 38, 42)
-            end)
-        else flying = false end
-    end)
-end)
-
-local noclip = false
-CreateButton("Noclip: Toggle", function(btn)
-    noclip = not noclip
-    if noclip then btn.Text = "Noclip: ON" else btn.Text = "Noclip: Toggle" end
-    local nc
-    nc = RunService.Stepped:Connect(function()
-        if not noclip then nc:Disconnect() return end
-        if LP.Character then
-            for _, v in pairs(LP.Character:GetDescendants()) do
-                if v:IsA("BasePart") then v.CanCollide = false end
-            end
-        end
-    end)
-end)
-
-local espActive = false
-CreateButton("Player ESP: Toggle", function(btn)
-    espActive = not espActive
-    if espActive then btn.Text = "ESP: ON" else btn.Text = "Player ESP: Toggle" end
-    local function ApplyESP(player)
-        if player ~= LP and player.Character then
-            if espActive then
-                if not player.Character:FindFirstChild("DexosESP") then
-                    local highlight = Instance.new("Highlight")
-                    highlight.Name = "DexosESP"
-                    highlight.FillColor = Color3.fromRGB(240, 240, 245)
