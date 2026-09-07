@@ -1,5 +1,5 @@
 -- ==========================================
---        DEXOS HUB - UNIVERSAL v6 (PRO)
+--     DEXOS HUB - PHYSICAL BYPASS SÜRÜMÜ
 -- ==========================================
 
 local CoreGui = game:GetService("CoreGui")
@@ -31,7 +31,7 @@ LCorner.CornerRadius = UDim.new(0, 10)
 LCorner.Parent = LoadFrame
 
 local LStroke = Instance.new("UIStroke")
-LStroke.Color = Color3.fromRGB(140, 0, 255) -- Deep Purple Neon
+LStroke.Color = Color3.fromRGB(140, 0, 255)
 LStroke.Thickness = 2
 LStroke.Parent = LoadFrame
 
@@ -44,13 +44,12 @@ LTitle.TextSize = 22
 LTitle.Font = Enum.Font.GothamBold
 LTitle.Parent = LoadFrame
 
--- Subtitle with Gradient Look effect
 local LSub = Instance.new("TextLabel")
 LSub.Size = UDim2.new(1, 0, 0, 15)
 LSub.Position = UDim2.new(0, 0, 0, 35)
 LSub.BackgroundTransparency = 1
 LSub.Text = "Premium Universal Script"
-LSub.TextColor3 = Color3.fromRGB(0, 180, 255) -- Cyan Accent
+LSub.TextColor3 = Color3.fromRGB(0, 180, 255)
 LSub.TextSize = 10
 LSub.Font = Enum.Font.Gotham
 LSub.Parent = LoadFrame
@@ -86,7 +85,6 @@ local BarMainCorner = Instance.new("UICorner")
 BarMainCorner.CornerRadius = UDim.new(0, 3)
 BarMainCorner.Parent = BarMain
 
--- Rainbow/RGB Effect for Loading Text/Bar Accent
 task.spawn(function()
     local hue = 0
     while LoadingGui.Parent do
@@ -98,27 +96,23 @@ task.spawn(function()
     end
 end)
 
--- Loading Stages Anim
 task.spawn(function()
     task.wait(0.5)
-    LStatus.Text = "Checking executor security..."
+    LStatus.Text = "Loading Physics Bypass..."
     TweenService:Create(BarMain, TweenInfo.new(1, Enum.EasingStyle.QuadOut), {Size = UDim2.new(0.3, 0, 1, 0)}):Play()
     task.wait(1)
-    
-    LStatus.Text = "Bypassing game anti-cheat..."
+    LStatus.Text = "Hooking Engine Metamethods..."
     TweenService:Create(BarMain, TweenInfo.new(0.8, Enum.EasingStyle.QuadOut), {Size = UDim2.new(0.6, 0, 1, 0)}):Play()
     task.wait(0.8)
-    
-    LStatus.Text = "Injecting Dexos ESP & Motor..."
+    LStatus.Text = "Injecting Dexos ESP & Fly..."
     TweenService:Create(BarMain, TweenInfo.new(1.2, Enum.EasingStyle.QuadOut), {Size = UDim2.new(1, 0, 1, 0)}):Play()
     task.wait(1.2)
-    
     LStatus.Text = "Successfully Loaded!"
     task.wait(0.4)
     LoadingGui:Destroy()
 end)
 
-task.wait(3.9) -- Wait for loader to finish
+task.wait(3.9)
 
 -- ==========================================
 --         MAIN DEXOS HUB INTERFACE
@@ -130,7 +124,7 @@ SGui.Parent = CoreGui
 local MainFrame = Instance.new("Frame")
 MainFrame.Size = UDim2.new(0, 440, 0, 280)
 MainFrame.Position = UDim2.new(0.5, -220, 0.4, -140)
-MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 13) -- Premium Dark Cyberpunk
+MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 13)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
@@ -144,7 +138,6 @@ local MainStroke = Instance.new("UIStroke")
 MainStroke.Thickness = 1.5
 MainStroke.Parent = MainFrame
 
--- Active RGB Effect on Main Frame Border
 task.spawn(function()
     local hue = 0
     while SGui.Parent do
@@ -155,7 +148,6 @@ task.spawn(function()
     end
 end)
 
--- SIDE NAVIGATION BAR
 local SideBar = Instance.new("Frame")
 SideBar.Size = UDim2.new(0, 120, 1, 0)
 SideBar.BackgroundColor3 = Color3.fromRGB(7, 7, 9)
@@ -180,13 +172,12 @@ local Version = Instance.new("TextLabel")
 Version.Size = UDim2.new(1, 0, 0, 15)
 Version.Position = UDim2.new(0, 0, 0, 30)
 Version.BackgroundTransparency = 1
-Version.Text = "v6.0 Official"
+Version.Text = "v7.0 Bypass"
 Version.TextColor3 = Color3.fromRGB(140, 0, 255)
 Version.TextSize = 9
 Version.Font = Enum.Font.GothamMedium
 Version.Parent = SideBar
 
--- CONTENT SCROLL FRAME
 local ContentFrame = Instance.new("ScrollingFrame")
 ContentFrame.Size = UDim2.new(1, -135, 1, -20)
 ContentFrame.Position = UDim2.new(0, 125, 0, 10)
@@ -201,7 +192,6 @@ local ListLayout = Instance.new("UIListLayout")
 ListLayout.Parent = ContentFrame
 ListLayout.Padding = UDim.new(0, 8)
 
--- MODERN BUTTON MAKER (ENG)
 local function CreateButton(text, callback)
     local Btn = Instance.new("TextButton")
     Btn.Size = UDim2.new(1, -10, 0, 35)
@@ -232,73 +222,80 @@ local function CreateButton(text, callback)
 end
 
 -- ==========================================
---         ⚙️ ENGINE CORE FUNCTIONS
+--     🔥 ENGINE BYPASS & FUNCTIONS 🔥
 -- ==========================================
-_G.WalkSpeedValue = 16
-_G.JumpPowerValue = 50
+_G.FizikselHiz = 0
+_G.JumpBoostActive = false
 
-RunService.Stepped:Connect(function()
+RunService.RenderStepped:Connect(function()
     pcall(function()
         local char = LP.Character
-        if char and char:FindFirstChild("Humanoid") then
-            if _G.WalkSpeedValue ~= 16 then char.Humanoid.WalkSpeed = _G.WalkSpeedValue end
-            if _G.JumpPowerValue ~= 50 then 
-                char.Humanoid.JumpPower = _G.JumpPowerValue 
-                char.Humanoid.UseJumpPower = true
-            end
+        local root = char and char:FindFirstChild("HumanoidRootPart")
+        local hum = char and char:FindFirstChild("Humanoid")
+        
+        if root and hum and hum.MoveDirection.Magnitude > 0 and _G.FizikselHiz > 0 then
+            root.CFrame = root.CFrame + (hum.MoveDirection * (_G.FizikselHiz * 0.1))
+        end
+        if _G.JumpBoostActive and UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+            root.Velocity = Vector3.new(root.Velocity.X, 60, root.Velocity.Z)
         end
     end)
 end)
 
-local SpeedIndicator = Instance.new("TextLabel")
-SpeedIndicator.Size = UDim2.new(1, -10, 0, 20)
-SpeedIndicator.BackgroundTransparency = 1
-SpeedIndicator.Text = "Current Speed: 16"
-SpeedIndicator.TextColor3 = Color3.fromRGB(140, 140, 150)
-SpeedIndicator.TextSize = 11
-SpeedIndicator.Font = Enum.Font.Gotham
-SpeedIndicator.Parent = ContentFrame
+local Indicator = Instance.new("TextLabel")
+Indicator.Size = UDim2.new(1, -10, 0, 20)
+Indicator.BackgroundTransparency = 1
+Indicator.Text = "Custom Speed Level: 0"
+Indicator.TextColor3 = Color3.fromRGB(140, 140, 150)
+Indicator.TextSize = 11
+Indicator.Font = Enum.Font.Gotham
+Indicator.Parent = ContentFrame
 
 -- 1. SPEED UP
-CreateButton("🏃 WalkSpeed +10", function()
-    _G.WalkSpeedValue = _G.WalkSpeedValue + 10
-    SpeedIndicator.Text = "Current Speed: " .. tostring(_G.WalkSpeedValue)
+CreateButton("🏃 WalkSpeed +", function()
+    _G.FizikselHiz = _G.FizikselHiz + 2
+    Indicator.Text = "Custom Speed Level: " .. tostring(_G.FizikselHiz)
 end)
 
--- 2. SPEED DOWN
-CreateButton("🚶 WalkSpeed -10", function()
-    if _G.WalkSpeedValue > 16 then
-        _G.WalkSpeedValue = _G.WalkSpeedValue - 10
-        SpeedIndicator.Text = "Current Speed: " .. tostring(_G.WalkSpeedValue)
-    else
-        _G.WalkSpeedValue = 16
-        SpeedIndicator.Text = "Current Speed: 16 (Normal)"
-    end
+-- 2. SPEED RESET
+CreateButton("🚶 Speed Reset", function()
+    _G.FizikselHiz = 0
+    Indicator.Text = "Custom Speed Level: 0 (Normal)"
 end)
 
--- 3. JUMP GIVER
-CreateButton("🚀 High Jump (150)", function()
-    _G.JumpPowerValue = 150
+-- 3. JUMP BOOST
+CreateButton("🚀 High Jump: Toggle", function(btn)
+    _G.JumpBoostActive = not _G.JumpBoostActive
+    if _G.JumpBoostActive then btn.Text = "🚀 Jump Boost: ON" else btn.Text = "🚀 High Jump: Toggle" end
 end)
 
 -- 4. PURE FLY
 local flying = false
-local flySpeed = 50
-local bv, bg
+local flySpeed = 60
+local f_bv, f_bg
 
 CreateButton("🦅 Fly Mode: Toggle", function(btn)
     pcall(function()
         local char = LP.Character
-        if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+        local root = char and char:FindFirstChild("HumanoidRootPart")
+        if not root then return end
         flying = not flying
         
         if flying then
             btn.Text = "🦅 Fly Mode: ON"
-            bg = Instance.new("BodyGyro", char.HumanoidRootPart)
-            bg.P = 9e4 bg.maxTorque = Vector3.new(9e9, 9e9, 9e9) bg.cframe = char.HumanoidRootPart.CFrame
+            btn.BackgroundColor3 = Color3.fromRGB(0, 120, 50)
             
-            bv = Instance.new("BodyVelocity", char.HumanoidRootPart)
-            bv.velocity = Vector3.new(0, 0.1, 0) bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+            f_bg = Instance.new("BodyGyro")
+            f_bg.P = 9e4 f_bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+            f_bg.cframe = root.CFrame f_bg.Parent = root
+            
+            f_bv = Instance.new("BodyVelocity")
+            f_bv.velocity = Vector3.new(0, 0.1, 0) f_bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+            f_bv.Parent = root
             
             task.spawn(function()
-                while flying and char and char:FindFirstChild("HumanoidRootPart") do
+                while flying and char and root.Parent do
+                    char.Humanoid.PlatformStand = true
+                    local camera = workspace.CurrentCamera
+                    local moveDir = Vector3.new(0, 0, 0)
+                    
