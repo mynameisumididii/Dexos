@@ -1,4 +1,4 @@
--- Clean old instances if exists
+
 local OldMenu = game:GetService("CoreGui"):FindFirstChild("DexosHubMenu")
 if OldMenu then OldMenu:Destroy() end
 
