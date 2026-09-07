@@ -22,6 +22,7 @@ Panel.BackgroundTransparency = 0.25
 Panel.BorderSizePixel = 0
 Panel.Active = true
 Panel.Draggable = true
+Panel.Visible = true -- FORCE OPEN AT START
 Panel.Parent = SGui
 
 local PanelCorner = Instance.new("UICorner")
@@ -68,30 +69,30 @@ Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.ZIndex = 3
 Title.Parent = TitleBar
 
--- --- OPEN BTN
+-- --- SMALL "D" OPEN BUTTON (Sadece menü kapalıyken sol ortada şık duracak)
 local OpenBtn = Instance.new("TextButton")
-OpenBtn.Size = UDim2.new(0, 60, 0, 35)
-OpenBtn.Position = UDim2.new(0, 10, 0.5, -17)
+OpenBtn.Size = UDim2.new(0, 45, 0, 45) -- Yuvarlak "D" ikonu
+OpenBtn.Position = UDim2.new(0, 15, 0.5, -22)
 OpenBtn.BackgroundColor3 = Color3.fromRGB(20, 15, 25)
 OpenBtn.BackgroundTransparency = 0.3
-OpenBtn.Text = "Dexos"
+OpenBtn.Text = "D"
 OpenBtn.TextColor3 = Color3.fromRGB(180, 0, 255)
-OpenBtn.TextSize = 12
+OpenBtn.TextSize = 20
 OpenBtn.Font = Enum.Font.GothamBold
-OpenBtn.Visible = false
+OpenBtn.Visible = false -- Başlangıçta gizli çünkü büyük menü açık başlayacak
 OpenBtn.ZIndex = 5
 OpenBtn.Parent = SGui
 
 local OpenCorner = Instance.new("UICorner")
-OpenCorner.CornerRadius = UDim.new(0, 6)
+OpenCorner.CornerRadius = UDim.new(1, 0) -- Tam yuvarlak yapar kanka
 OpenCorner.Parent = OpenBtn
 
 local OpenStroke = Instance.new("UIStroke")
 OpenStroke.Color = Color3.fromRGB(180, 0, 255)
-OpenStroke.Thickness = 1
+OpenStroke.Thickness = 1.5
 OpenStroke.Parent = OpenBtn
 
--- --- CLOSE BUTTON
+-- --- CLOSE BUTTON (X)
 local CloseBtn = Instance.new("TextButton")
 CloseBtn.Size = UDim2.new(0, 30, 0, 30)
 CloseBtn.Position = UDim2.new(1, -35, 0, 5)
@@ -160,6 +161,9 @@ local function CreateButton(text, callback)
     return Btn
 end
 
+-- ==========================================
+--         ⚙️ ENGINE CORE UTILITIES
+-- ==========================================
 _G.StepSpeed = 0
 _G.CustomJumpBoost = 0
 _G.InfJump = false
@@ -280,14 +284,3 @@ CreateButton("🧱 Noclip: Toggle", function(btn)
         if not noclip then nc:Disconnect() return end
         if LP.Character then
             for _, v in pairs(LP.Character:GetDescendants()) do
-                if v:IsA("BasePart") then v.CanCollide = false end
-            end
-        end
-    end)
-end)
-
-local espActive = false
-CreateButton("👁️ Player ESP: Toggle", function(btn)
-    espActive = not espActive
-    if espActive then btn.Text = "👁️ ESP: ON" else btn.Text = "👁️ Player ESP: Toggle" end
-    local function ApplyESP(player)
