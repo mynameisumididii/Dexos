@@ -17,7 +17,7 @@ SGui.Parent = CoreGui
 local Panel = Instance.new("Frame")
 Panel.Size = UDim2.new(0, 420, 0, 310)
 Panel.Position = UDim2.new(0.5, -210, 0.4, -155)
-Panel.BackgroundColor3 = Color3.fromRGB(30, 30, 33) -- Matte Grey Background
+Panel.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
 Panel.BorderSizePixel = 0
 Panel.Active = true
 Panel.Draggable = true
@@ -28,16 +28,15 @@ local PanelCorner = Instance.new("UICorner")
 PanelCorner.CornerRadius = UDim.new(0, 8)
 PanelCorner.Parent = Panel
 
--- Clean Grey Border
 local PanelStroke = Instance.new("UIStroke")
-PanelStroke.Color = Color3.fromRGB(50, 50, 55) -- Soft Grey Border
+PanelStroke.Color = Color3.fromRGB(50, 50, 55)
 PanelStroke.Thickness = 1.5
 PanelStroke.Parent = Panel
 
 -- Title Bar Frame
 local TitleBar = Instance.new("Frame")
 TitleBar.Size = UDim2.new(1, 0, 0, 40)
-TitleBar.BackgroundColor3 = Color3.fromRGB(24, 24, 26) -- Darker Grey for Title
+TitleBar.BackgroundColor3 = Color3.fromRGB(24, 24, 26)
 TitleBar.BorderSizePixel = 0
 TitleBar.ZIndex = 2
 TitleBar.Parent = Panel
@@ -51,7 +50,7 @@ Title.Size = UDim2.new(1, -50, 1, 0)
 Title.Position = UDim2.new(0, 15, 0, 0)
 Title.BackgroundTransparency = 1
 Title.Text = "DEXOS HUB  //  UNIVERSAL v3"
-Title.TextColor3 = Color3.fromRGB(210, 210, 215) -- Non-bright Soft White Text
+Title.TextColor3 = Color3.fromRGB(210, 210, 215)
 Title.TextSize = 13
 Title.Font = Enum.Font.GothamBold
 Title.TextXAlignment = Enum.TextXAlignment.Left
@@ -64,7 +63,7 @@ OpenBtn.Size = UDim2.new(0, 45, 0, 45)
 OpenBtn.Position = UDim2.new(0, 15, 0.5, -22)
 OpenBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 38)
 OpenBtn.Text = "D"
-OpenBtn.TextColor3 = Color3.fromRGB(200, 200, 205) -- Soft White
+OpenBtn.TextColor3 = Color3.fromRGB(200, 200, 205)
 OpenBtn.TextSize = 18
 OpenBtn.Font = Enum.Font.GothamBold
 OpenBtn.Visible = false
@@ -86,7 +85,7 @@ CloseBtn.Size = UDim2.new(0, 30, 0, 30)
 CloseBtn.Position = UDim2.new(1, -35, 0, 5)
 CloseBtn.BackgroundTransparency = 1
 CloseBtn.Text = "X"
-CloseBtn.TextColor3 = Color3.fromRGB(200, 80, 80) -- Soft Red
+CloseBtn.TextColor3 = Color3.fromRGB(200, 80, 80)
 CloseBtn.TextSize = 14
 CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.ZIndex = 4
@@ -121,10 +120,10 @@ ListLayout.Padding = UDim.new(0, 8)
 local function CreateButton(text, callback)
     local Btn = Instance.new("TextButton")
     Btn.Size = UDim2.new(1, -5, 0, 35)
-    Btn.BackgroundColor3 = Color3.fromRGB(38, 38, 42) -- Lighter Grey for buttons
+    Btn.BackgroundColor3 = Color3.fromRGB(38, 38, 42)
     Btn.BorderSizePixel = 0
     Btn.Text = text
-    Btn.TextColor3 = Color3.fromRGB(200, 200, 205) -- Non-bright Soft White
+    Btn.TextColor3 = Color3.fromRGB(200, 200, 205)
     Btn.TextSize = 12
     Btn.Font = Enum.Font.GothamSemibold
     Btn.ZIndex = 3
@@ -155,17 +154,14 @@ _G.StepSpeed = 0
 _G.CustomJumpBoost = 0
 _G.InfJump = false
 
--- Physical Core Loop
 RunService.RenderStepped:Connect(function()
     pcall(function()
         local char = LP.Character
         local root = char and char:FindFirstChild("HumanoidRootPart")
         local hum = char and char:FindFirstChild("Humanoid")
-        
         if root and hum and hum.MoveDirection.Magnitude > 0 and _G.StepSpeed > 0 then
             root.CFrame = root.CFrame + (hum.MoveDirection * (_G.StepSpeed * 0.05))
         end
-        
         if _G.CustomJumpBoost > 0 and UserInputService:IsKeyDown(Enum.KeyCode.Space) then
             root.Velocity = Vector3.new(root.Velocity.X, 50 + _G.CustomJumpBoost, root.Velocity.Z)
         end
@@ -182,7 +178,7 @@ local Indicator = Instance.new("TextLabel")
 Indicator.Size = UDim2.new(1, -5, 0, 20)
 Indicator.BackgroundTransparency = 1
 Indicator.Text = "Speed Level: 0  ||  Jump Level: 0"
-Indicator.TextColor3 = Color3.fromRGB(160, 160, 165) -- Soft Grey-White
+Indicator.TextColor3 = Color3.fromRGB(160, 160, 165)
 Indicator.TextSize = 11
 Indicator.Font = Enum.Font.Gotham
 Indicator.ZIndex = 3
@@ -285,3 +281,8 @@ CreateButton("Player ESP: Toggle", function(btn)
     if espActive then btn.Text = "ESP: ON" else btn.Text = "Player ESP: Toggle" end
     local function ApplyESP(player)
         if player ~= LP and player.Character then
+            if espActive then
+                if not player.Character:FindFirstChild("DexosESP") then
+                    local highlight = Instance.new("Highlight")
+                    highlight.Name = "DexosESP"
+                    highlight.FillColor = Color3.fromRGB(240, 240, 245)
