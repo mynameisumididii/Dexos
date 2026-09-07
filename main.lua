@@ -1,5 +1,5 @@
 -- ==========================================
---    UMIDI HUB - %100 ÇALIŞAN BYPASS SÜRÜMÜ
+--     UMIDI HUB - %100 ÇALIŞAN MOTOR SÜRÜMÜ
 -- ==========================================
 
 local CoreGui = game:GetService("CoreGui")
@@ -58,7 +58,7 @@ local SubTitle = Instance.new("TextLabel")
 SubTitle.Size = UDim2.new(1, 0, 0, 15)
 SubTitle.Position = UDim2.new(0, 0, 0, 30)
 SubTitle.BackgroundTransparency = 1
-SubTitle.Text = "Universal v3"
+SubTitle.Text = "Universal v4"
 SubTitle.TextColor3 = Color3.fromRGB(0, 180, 255)
 SubTitle.TextSize = 10
 SubTitle.Font = Enum.Font.Gotham
@@ -110,28 +110,31 @@ local function CreateModernButton(text, callback)
 end
 
 -- ==========================================
---        🔥 BYPASS VE ÖZELLİK KODLARI 🔥
+--        🔥 GERÇEK BYPASS SİSTEMİ 🔥
 -- ==========================================
 
-_G.TargetSpeed = 16
-_G.TargetJump = 50
+_G.CustomSpeed = 16
+_G.CustomJump = 50
+_G.BypassAktif = true
 
--- Oyunun hileyi engellemesini önleyen arka plan döngüsü (Anti-Cheat Bypass)
-RunService.Heartbeat:Connect(function()
-    pcall(function()
-        local char = LP.Character
-        if char and char:FindFirstChild("Humanoid") then
-            -- Oyun hızı sıfırlamaya çalışırsa bizim belirlediğimiz hıza geri zorlar
-            if _G.TargetSpeed ~= 16 then
-                char.Humanoid.WalkSpeed = _G.TargetSpeed
+-- Karakter yenilendikçe bypass döngüsünü ayarla
+task.spawn(function()
+    while _G.BypassAktif do
+        pcall(function()
+            local char = LP.Character or LP.CharacterAdded:Wait()
+            local hum = char:WaitForChild("Humanoid")
+            
+            -- Standart atamayı bypass etmek için sürekli tetikleme
+            if _G.CustomSpeed ~= 16 and hum.WalkSpeed ~= _G.CustomSpeed then
+                hum.WalkSpeed = _G.CustomSpeed
             end
-            -- Zıplama gücü sabitleyici
-            if _G.TargetJump ~= 50 then
-                char.Humanoid.JumpPower = _G.TargetJump
-                char.Humanoid.UseJumpPower = true
+            if _G.CustomJump ~= 50 and hum.JumpPower ~= _G.CustomJump then
+                hum.JumpPower = _G.CustomJump
+                hum.UseJumpPower = true
             end
-        end
-    end)
+        end)
+        task.wait(0.1) -- Anti-cheat'i şişirmemek için milisaniyelik güvenli döngü
+    end
 end)
 
 local MevcutHizText = Instance.new("TextLabel")
@@ -145,35 +148,35 @@ MevcutHizText.Parent = ContentFrame
 
 -- 1. HIZ ARTIR
 CreateModernButton("🏃 Hızı +10 Yükselt", function()
-    _G.TargetSpeed = _G.TargetSpeed + 10
-    MevcutHizText.Text = "Mevcut Hız: " .. tostring(_G.TargetSpeed)
+    _G.CustomSpeed = _G.CustomSpeed + 10
+    MevcutHizText.Text = "Mevcut Hız: " .. tostring(_G.CustomSpeed)
 end)
 
 -- 2. HIZ AZALT
 CreateModernButton("🚶 Hızı -10 Düşür", function()
-    if _G.TargetSpeed > 16 then
-        _G.TargetSpeed = _G.TargetSpeed - 10
-        MevcutHizText.Text = "Mevcut Hız: " .. tostring(_G.TargetSpeed)
+    if _G.CustomSpeed > 16 then
+        _G.CustomSpeed = _G.CustomSpeed - 10
+        MevcutHizText.Text = "Mevcut Hız: " .. tostring(_G.CustomSpeed)
     else
-        _G.TargetSpeed = 16
+        _G.CustomSpeed = 16
         MevcutHizText.Text = "Mevcut Hız: 16 (Normal)"
     end
 end)
 
 -- 3. SÜPER ZIPLAMA
 CreateModernButton("🚀 Süper Zıplama (150)", function()
-    _G.TargetJump = 150
+    _G.CustomJump = 150
 end)
 
 -- 4. ZIPLAMAYI SIFIRLA
 CreateModernButton("↩️ Zıplamayı Normale Döndür", function()
-    _G.TargetJump = 50
+    _G.CustomJump = 50
     pcall(function() LP.Character.Humanoid.JumpPower = 50 end)
 end)
 
 -- 5. KESİN ÇALIŞAN UÇMA (FLY)
 local flying = false
-local flySpeed = 60
+local flySpeed = 50
 local bv, bg
 
 CreateModernButton("🦅 Uçuşu Aç/Kapat", function(btn)
@@ -201,14 +204,16 @@ CreateModernButton("🦅 Uçuşu Aç/Kapat", function(btn)
                 while flying and char and char:FindFirstChild("HumanoidRootPart") do
                     char.Humanoid.PlatformStand = true
                     local camera = workspace.CurrentCamera
-                    local moveDir = Vector3.new(0,0,0)
+                    local moveDir = Vector3.new(0, 0, 0)
                     
                     if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + camera.CFrame.LookVector end
                     if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - camera.CFrame.LookVector end
+                    if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - camera.CFrame.RightVector end
+                    if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + camera.CFrame.RightVector end
                     
                     bv.velocity = moveDir * flySpeed
                     bg.cframe = camera.CFrame
-                    task.wait()
+                    RunService.RenderStepped:Wait()
                 end
                 if bg then bg:Destroy() end
                 if bv then bv:Destroy() end
@@ -222,7 +227,7 @@ CreateModernButton("🦅 Uçuşu Aç/Kapat", function(btn)
     end)
 end)
 
--- 6. DUVARLARDAN GECE (NOCLIP)
+-- 6. DUVARLARDAN GEÇME (NOCLIP)
 local noclip = false
 CreateModernButton("🧱 Duvarlardan Geçme", function(btn)
     noclip = not noclip
@@ -233,8 +238,14 @@ CreateModernButton("🧱 Duvarlardan Geçme", function(btn)
         btn.Text = "🧱 Duvarlardan Geçme"
         btn.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
     end
-    RunService.Stepped:Connect(function()
-        if noclip and LP.Character then
+    
+    local noclipConnection
+    noclipConnection = RunService.Stepped:Connect(function()
+        if not noclip then 
+            noclipConnection:Disconnect() 
+            return 
+        end
+        if LP.Character then
             for _, v in pairs(LP.Character:GetDescendants()) do
                 if v:IsA("BasePart") then v.CanCollide = false end
             end
